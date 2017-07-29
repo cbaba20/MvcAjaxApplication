@@ -1,0 +1,93 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewBag.Title = "Index";
+}
+@{
+    if (Request["Partial"] == null)
+    {
+        //return full view
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        //this will give just a partialview with the bodyContent
+        Layout = "~/Views/Shared/_LayoutPartial.cshtml";
+    }
+}
+<h2>My Projects</h2>
+
+<div class="row">
+    <input type="button" name="btnGetProducts" value="Get Products" id="btnGetproducts" />
+</div>
+
+<br />
+<div class="ajaxTable" id="productsDiv">
+
+</div>
+
+
+<div id="editProducts" style="display:none">
+
+    <table>
+        <tr>
+            <th>Product Id</th>
+            <th>Product Price</th>
+        </tr>
+        <tr>
+            <td><input type="text" name="txtId" id="txtId" /></td>
+            <td><input type="text" name="txtPrice" id="txtPrice" /></td>
+        </tr>
+
+    </table>
+    <input type="button" name="btnEdit" value="Change Price" id="btnEdit" />
+</div>
+
+
+
+
+
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+
+    $('#btnGetproducts').click(function () {
+        var Url = '/Home/GetProductDescription';
+        $.ajax({
+            url: Url,
+            cache: false,
+            contentType: 'application/html;charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (data) {
+                $('#productsDiv').html(data);
+                $('#editProducts').show().appendTo($('#productsDiv'));
+            },
+            error: function () {
+
+            }
+
+        });
+    });
+
+    $('#btnEdit').click(function () {
+        var productId = $('#txtId').val();
+        var newPrice = $('#txtPrice').val();
+        
+        $.ajax({
+            url: '/Home/ChangeProductPrice/',
+            contentType: 'application/html;charset=utf-8',
+            cache:false,
+            type:"GET",
+            dataType:'html',
+            data: { productId: productId, newPrice: newPrice },
+            success:function (data) {
+                $('#products').html(data);
+            },
+            error:function (xhr,status) {
+                alert(status);
+            }
+
+        })
+
+    })
+</script>
